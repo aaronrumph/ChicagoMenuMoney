@@ -5,7 +5,6 @@ library(pdftools)
 library(tidyverse)
 library(dplyr)
 
-setwd("\menu-money-pdfs")
 options(scipen=50, digits = 2)
 
 # Cleaning 2012 to 2016 ====
@@ -41,8 +40,8 @@ for (year in 2012:2016){
   assign(paste0("menu", year), df)
 }
 
-# Cleaning 2017 to 2023 ====
-for (year in 2017:2023){
+# Cleaning 2017 to 2025 ====
+for (year in 2017:2025){
   menu <- pdf_text(paste0(year,"Menu.pdf")) %>% readr::read_lines()
   menu_keep <- menu[grep("Ward|\\$", menu)] 
   
@@ -83,7 +82,7 @@ for (year in 2017:2023){
 }
 
 # APPEND ALL YEARS  ====
-allMenu_list <- lapply(2012:2023, function(x) bind_rows(get(paste0("menu", x)))) 
+allMenu_list <- lapply(2012:2025, function(x) bind_rows(get(paste0("menu", x)))) 
 allMenu <- do.call("rbind", allMenu_list)
 
 allMenu$ward <- as.numeric(allMenu$ward)
@@ -419,4 +418,4 @@ allMenu %>% group_by(year, ward) %>%
   summarize(total = sum(cost, na.rm = T)) %>% arrange(year) %>% view(title = "Annual Ward Totals - FINAL")
   # Shows mismatch in Wards 1 and 2 in 2015. However, this is not a coding mistake; the amounts correspond to what is in the spreadsheet. For instance, the numbers for Ward 1 in the PDF add up to $1,344,404, not to $1,320,000 as stated in the "TOTAL COMMITTED" row. 
 
-write.csv(allMenu, file = "AllMenu2012-2023.csv")
+write.csv(allMenu, file = "AllMenu2012-2025.csv")
